@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Getter
-public class PostDto {
+public class PostDetailDto {
     private final int id;
     private final LocalDateTime createDate;
     private final LocalDateTime modifyDate;
@@ -19,8 +17,9 @@ public class PostDto {
     private final String authorName;
     private final String title;
     private final String content;
+    private final List<PostCommentDto> comments;
 
-    public PostDto(Post post) {
+    public PostDetailDto(Post post) {
         this(
                 post.getId(),
                 post.getCreateDate(),
@@ -28,7 +27,8 @@ public class PostDto {
                 post.getAuthor().getId(),
                 post.getAuthor().getNickname(),
                 post.getTitle(),
-                post.getContent()
+                post.getContent(),
+                post.getComments().stream().map(PostCommentDto::new).toList()
         );
     }
 }

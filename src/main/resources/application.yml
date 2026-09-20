@@ -20,6 +20,13 @@ spring:
         highlight_sql: true
         use_sql_comments: true
         default_batch_fetch_size: 100
+
+jwt:
+  # 운영 환경에서는 반드시 JWT_SECRET 환경 변수로 32바이트 이상의 Base64 키를 전달한다.
+  secret: ${JWT_SECRET:MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=}
+  access-token-expiration-minutes: 30
+  refresh-token-expiration-days: 14
+
 logging:
   level:
     com.back: DEBUG

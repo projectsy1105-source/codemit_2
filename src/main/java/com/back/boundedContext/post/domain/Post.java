@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class Post extends BaseIdAndTime {
     @ManyToOne(fetch = LAZY)
     private PostMember author;
 
+    private State state;
+
     private String title;
 
     @Column(columnDefinition = "LONGTEXT")
@@ -34,6 +37,7 @@ public class Post extends BaseIdAndTime {
 
     public Post(PostMember author, String title, String content) {
         this.author = author;
+        this.state = State.ACTIVE;
         this.title = title;
         this.content = content;
     }
@@ -47,7 +51,27 @@ public class Post extends BaseIdAndTime {
         return postComment;
     }
 
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
+    public void delete() {
+        this.state = State.DELETED;
+    }
+
+    public boolean isDeleted() {
+        return this.state == State.DELETED;
+    }
+
     public boolean hasComments() {
         return !comments.isEmpty();
+    }
+
+    public enum State {
+        ACTIVE, DELETED
     }
 }

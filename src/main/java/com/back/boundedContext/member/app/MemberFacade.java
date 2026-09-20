@@ -4,6 +4,7 @@ import com.back.boundedContext.member.domain.Member;
 import com.back.boundedContext.member.domain.MemberPolicy;
 import com.back.boundedContext.member.out.MemberRepository;
 import com.back.global.global.RsData.RsData;
+import com.back.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ public class MemberFacade {
 
     private final MemberRepository memberRepository;
     private final MemberJoinUseCase memberJoinUseCase;
+    private final MemberAuthUseCase memberAuthUseCase;
     private final MemberPolicy memberPolicy;
 
     @Transactional(readOnly = true)
@@ -26,6 +28,21 @@ public class MemberFacade {
     @Transactional
     public RsData<Member> join(String username, String password, String nickname) {
         return memberJoinUseCase.join(username, password, nickname);
+    }
+
+    @Transactional
+    public JwtTokenProvider.TokenPair login(String username, String password) {
+        return memberAuthUseCase.login(username, password);
+    }
+
+    @Transactional
+    public JwtTokenProvider.TokenPair reissue(String refreshToken) {
+        return memberAuthUseCase.reissue(refreshToken);
+    }
+
+    @Transactional
+    public void logout(int memberId) {
+        memberAuthUseCase.logout(memberId);
     }
 
     public String randomTip() {

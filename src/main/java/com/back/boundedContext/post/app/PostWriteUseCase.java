@@ -19,13 +19,15 @@ public class PostWriteUseCase {
     private final EventPublisher eventPublisher;
     private final MemberApiClient  memberApiClient;
 
-    public RsData<Post> write(PostMember author, String title, String content) {
+    public RsData<PostDto> write(PostMember author, String title, String content) {
         Post post = new Post(author, title, content);
         postRepository.save(post);
 
-        eventPublisher.publisher(new PostCreatedEvent(new PostDto(post)));
+        PostDto postDto = new PostDto(post);
+
+        eventPublisher.publisher(new PostCreatedEvent(postDto));
         String tip = memberApiClient.getRandomSecureTip();
 
-        return new RsData<>("201-1", "%d번 글이 생성되었습니다. 보안 팁 : %s".formatted(post.getId(), tip), post);
+        return new RsData<>("201-1", "%d번 글이 생성되었습니다. 보안 팁 : %s".formatted(post.getId(), tip), postDto);
     }
 }
