@@ -4,6 +4,7 @@ package com.back.boundedContext.post.domain;
 import com.back.global.entity.BaseIdAndTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -17,18 +18,24 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 public class PostComment extends BaseIdAndTime {
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(nullable = false)
     private Post post;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(nullable = false)
     private PostMember author;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     public PostComment(Post post, PostMember author, String content) {
         this.post = post;
         this.author = author;
+        this.content = content;
+    }
+
+    public void changeContent(String content) {
         this.content = content;
     }
 }

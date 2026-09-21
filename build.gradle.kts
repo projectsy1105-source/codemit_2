@@ -32,6 +32,7 @@ dependencies {
     // Spring Boot 3.5.16 BOM -> Spring Security 6.5.11: BCrypt 비밀번호 해시와 JWT 인증 필터 제공
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     // JJWT 0.13.0: HS256 JWT 생성과 서명/만료 검증을 간단히 처리
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")

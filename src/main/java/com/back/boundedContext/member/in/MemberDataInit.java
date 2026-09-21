@@ -38,12 +38,13 @@ public class MemberDataInit {
     public void makeBaseMembers() {
         if (memberFacade.count() > 0) return;
 
-        Member systemMember = memberFacade.join("system", "1234", "시스템").getData();
-        Member holdingMember = memberFacade.join("holding", "1234", "홀딩").getData();
-        Member adminMember = memberFacade.join("admin", "1234", "관리자").getData();
-        Member user1Member = memberFacade.join("user1", "1234", "유저1").getData();
-        Member user2Member = memberFacade.join("user2", "1234", "유저2").getData();
-        Member user3Member = memberFacade.join("user3", "1234", "유저3").getData();
+        // 초기 데이터도 실제 가입 규칙(이메일/8자 이상 비밀번호)을 그대로 따른다.
+        memberFacade.join("system@example.com", "password1234", "시스템");
+        memberFacade.join("holding@example.com", "password1234", "홀딩");
+        memberFacade.join("admin@example.com", "password1234", "관리자");
+        memberFacade.join("user1@example.com", "password1234", "유저1");
+        memberFacade.join("user2@example.com", "password1234", "유저2");
+        memberFacade.join("user3@example.com", "password1234", "유저3");
     }
 
 }

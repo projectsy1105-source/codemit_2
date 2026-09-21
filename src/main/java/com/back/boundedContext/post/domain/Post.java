@@ -2,18 +2,13 @@ package com.back.boundedContext.post.domain;
 
 
 import com.back.global.entity.BaseIdAndTime;
-import com.back.shared.post.dto.PostCommentDto;
-import com.back.shared.post.event.PostCommentCreatedEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -22,22 +17,22 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 public class Post extends BaseIdAndTime {
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(nullable = false)
     private PostMember author;
 
-    private State state;
-
+    @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
-    @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    // 글을 물리 삭제하면 연관 댓글도 함께 삭제한다는 정책을 JPA 관계에 명시한다.
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> comments = new ArrayList<>();
 
     public Post(PostMember author, String title, String content) {
         this.author = author;
-        this.state = State.ACTIVE;
         this.title = title;
         this.content = content;
     }
@@ -47,7 +42,6 @@ public class Post extends BaseIdAndTime {
 
         comments.add(postComment);
 
-        publishEvent(new PostCommentCreatedEvent(new PostCommentDto(postComment)));
         return postComment;
     }
 
@@ -59,19 +53,7 @@ public class Post extends BaseIdAndTime {
         this.content = content;
     }
 
-    public void delete() {
-        this.state = State.DELETED;
-    }
-
-    public boolean isDeleted() {
-        return this.state == State.DELETED;
-    }
-
     public boolean hasComments() {
         return !comments.isEmpty();
-    }
-
-    public enum State {
-        ACTIVE, DELETED
     }
 }

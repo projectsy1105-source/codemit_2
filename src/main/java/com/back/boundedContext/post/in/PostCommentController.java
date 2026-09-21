@@ -4,9 +4,7 @@ import com.back.boundedContext.post.app.PostFacade;
 import com.back.boundedContext.post.domain.PostMember;
 import com.back.boundedContext.post.dto.PostRequest;
 import com.back.global.global.RsData.RsData;
-import com.back.shared.post.dto.PageResponse;
-import com.back.shared.post.dto.PostDetailDto;
-import com.back.shared.post.dto.PostDto;
+import com.back.shared.post.dto.PostCommentDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,54 +17,46 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class PostController {
+public class PostCommentController {
 
     private final PostFacade postFacade;
 
-    @GetMapping
-    public RsData<PageResponse<PostDto>> list(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int authorId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
-    ) {
-        return postFacade.list(keyword, authorId, page, size);
+    @GetMapping("/posts/{postId}/comments")
+    public RsData<List<PostCommentDto>> list(@PathVariable int postId) {
+        return postFacade.listComments(postId);
     }
 
-    @GetMapping("/{postId}")
-    public RsData<PostDetailDto> find(@PathVariable int postId) {
-        return postFacade.find(postId);
-    }
-
-    @PostMapping
-    public ResponseEntity<RsData<PostDto>> write(
+    @PostMapping("/posts/{postId}/comments")
+    public ResponseEntity<RsData<PostCommentDto>> write(
+            @PathVariable int postId,
             Authentication authentication,
-            @Valid @RequestBody PostRequest.Create request
+            @Valid @RequestBody PostRequest.Comment request
     ) {
         PostMember author = postFacade.getRequiredPostMember(authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(postFacade.write(author, request.title(), request.content()));
+                .body(postFacade.writeComment(postId, author, request.content()));
     }
 
-    @PutMapping("/{postId}")
-    public RsData<PostDto> update(
-            @PathVariable int postId,
+    @PutMapping("/comments/{commentId}")
+    public RsData<PostCommentDto> update(
+            @PathVariable int commentId,
             Authentication authentication,
-            @Valid @RequestBody PostRequest.Update request
+            @Valid @RequestBody PostRequest.Comment request
     ) {
         PostMember author = postFacade.getRequiredPostMember(authentication.getName());
-        return postFacade.update(postId, author, request.title(), request.content());
+        return postFacade.updateComment(commentId, author, request.content());
     }
 
-    @DeleteMapping("/{postId}")
-    public RsData<Void> delete(@PathVariable int postId, Authentication authentication) {
+    @DeleteMapping("/comments/{commentId}")
+    public RsData<Void> delete(@PathVariable int commentId, Authentication authentication) {
         PostMember author = postFacade.getRequiredPostMember(authentication.getName());
-        return postFacade.delete(postId, author);
+        return postFacade.deleteComment(commentId, author);
     }
 }

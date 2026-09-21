@@ -42,9 +42,9 @@ public class PostDataInit {
     public void makeBasePosts() {
         if (postFacade.count() > 0) return;
 
-        PostMember user1 = postFacade.findPostMember ("user1").get();
-        PostMember user2 = postFacade.findPostMember ("user2").get();
-        PostMember user3 = postFacade.findPostMember ("user3").get();
+        PostMember user1 = postFacade.findPostMember("user1@example.com").orElseThrow();
+        PostMember user2 = postFacade.findPostMember("user2@example.com").orElseThrow();
+        PostMember user3 = postFacade.findPostMember("user3@example.com").orElseThrow();
 
         RsData<PostDto> post1 = postFacade.write(user1, "제목1", "내용1"); log.debug(post1.getMsg());
         RsData<PostDto> post2 = postFacade.write(user1, "제목2", "내용2"); log.debug(post2.getMsg());
@@ -63,23 +63,23 @@ public class PostDataInit {
         Post post5 = postFacade.findById(5).get();
         Post post6 = postFacade.findById(6).get();
 
-        PostMember user1Member = postFacade.findPostMember("user1").get();
-        PostMember user2Member = postFacade.findPostMember("user2").get();
-        PostMember user3Member = postFacade.findPostMember("user3").get();
+        PostMember user1Member = postFacade.findPostMember("user1@example.com").orElseThrow();
+        PostMember user2Member = postFacade.findPostMember("user2@example.com").orElseThrow();
+        PostMember user3Member = postFacade.findPostMember("user3@example.com").orElseThrow();
 
         if (post1.hasComments()) return;
 
-        post1.addComment(user1Member, "댓글1");
-        post1.addComment(user2Member, "댓글2");
-        post1.addComment(user3Member, "댓글3");
+        postFacade.writeComment(post1.getId(), user1Member, "댓글1");
+        postFacade.writeComment(post1.getId(), user2Member, "댓글2");
+        postFacade.writeComment(post1.getId(), user3Member, "댓글3");
 
-        post2.addComment(user2Member, "댓글4");
-        post2.addComment(user2Member, "댓글5");
+        postFacade.writeComment(post2.getId(), user2Member, "댓글4");
+        postFacade.writeComment(post2.getId(), user2Member, "댓글5");
 
-        post3.addComment(user3Member, "댓글6");
-        post3.addComment(user3Member, "댓글7");
+        postFacade.writeComment(post3.getId(), user3Member, "댓글6");
+        postFacade.writeComment(post3.getId(), user3Member, "댓글7");
 
-        post4.addComment(user1Member, "댓글8");
-        post5.addComment(user1Member, "댓글9");
+        postFacade.writeComment(post4.getId(), user1Member, "댓글8");
+        postFacade.writeComment(post5.getId(), user1Member, "댓글9");
     }
 }

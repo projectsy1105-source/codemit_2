@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class Member extends SourceMember {
-    public Member(String username, String password, String nickname) {
-        super(username, password, nickname);
+    public Member(String email, String password, String nickname) {
+        super(email, password, nickname);
     }
 
     public int increaseActivityScore(int amount) {

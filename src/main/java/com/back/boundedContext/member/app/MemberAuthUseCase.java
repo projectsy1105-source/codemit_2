@@ -28,8 +28,8 @@ public class MemberAuthUseCase {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public JwtTokenProvider.TokenPair login(String username, String password) {
-        Member member = memberRepository.findByUsername(username)
+    public JwtTokenProvider.TokenPair login(String email, String password) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(this::invalidCredentials);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
@@ -61,7 +61,7 @@ public class MemberAuthUseCase {
     }
 
     private JwtTokenProvider.TokenPair issueAndSaveTokens(Member member) {
-        JwtTokenProvider.TokenPair tokenPair = jwtTokenProvider.createTokenPair(member.getId());
+        JwtTokenProvider.TokenPair tokenPair = jwtTokenProvider.createTokenPair(member);
         String refreshTokenHash = passwordEncoder.encode(toBcryptInput(tokenPair.refreshToken()));
         LocalDateTime refreshTokenExpiresAt = LocalDateTime.ofInstant(tokenPair.refreshTokenExpiresAt(), ZoneOffset.UTC);
 
@@ -75,7 +75,7 @@ public class MemberAuthUseCase {
     }
 
     private DomainException invalidCredentials() {
-        // username 존재 여부를 구분하지 않아 계정 열거 공격을 줄인다.
+        // 이메일 존재 여부를 구분하지 않아 계정 열거 공격을 줄인다.
         return new DomainException("401-1", "아이디 또는 비밀번호가 올바르지 않습니다.");
     }
 

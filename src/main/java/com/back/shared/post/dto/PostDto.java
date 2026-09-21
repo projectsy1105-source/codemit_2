@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Getter
@@ -19,6 +16,7 @@ public class PostDto {
     private final String authorName;
     private final String title;
     private final String content;
+    private final long commentCount;
 
     public PostDto(Post post) {
         this(
@@ -28,7 +26,8 @@ public class PostDto {
                 post.getAuthor().getId(),
                 post.getAuthor().getNickname(),
                 post.getTitle(),
-                post.getContent()
+                post.getContent(),
+                post.getComments().size()
         );
     }
 }

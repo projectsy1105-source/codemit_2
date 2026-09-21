@@ -19,14 +19,18 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter(value = AccessLevel.PROTECTED)
 @NoArgsConstructor
 public abstract class BaseMember extends BaseEntity {
-    @Column(unique = true)
-    private String username;
+    @Column(nullable = false, unique = true, length = 320)
+    private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false, length = 50)
     private String nickname;
     private int activityScore;
 
-    public BaseMember(String username, String password, String nickname, int activityScore) {
-        this.username = username;
+    public BaseMember(String email, String password, String nickname, int activityScore) {
+        this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.activityScore = activityScore;

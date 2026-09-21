@@ -13,7 +13,7 @@ public class MemberDto {
     private final int id;
     private final LocalDateTime createDate;
     private final LocalDateTime modifyDate;
-    private final String username;
+    private final String email;
     private final String nickname;
     private final int activityScore;
 
@@ -22,7 +22,7 @@ public class MemberDto {
                 member.getId(),
                 member.getCreateDate(),
                 member.getModifyDate(),
-                member.getUsername(),
+                member.getEmail(),
                 member.getNickname(),
                 member.getActivityScore()
         );

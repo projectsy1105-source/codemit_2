@@ -1,7 +1,6 @@
 package com.back.boundedContext.member.app;
 
 import com.back.boundedContext.member.domain.Member;
-import com.back.boundedContext.member.domain.MemberPolicy;
 import com.back.boundedContext.member.out.MemberRepository;
 import com.back.global.global.RsData.RsData;
 import com.back.global.security.JwtTokenProvider;
@@ -18,7 +17,6 @@ public class MemberFacade {
     private final MemberRepository memberRepository;
     private final MemberJoinUseCase memberJoinUseCase;
     private final MemberAuthUseCase memberAuthUseCase;
-    private final MemberPolicy memberPolicy;
 
     @Transactional(readOnly = true)
     public long count() {
@@ -26,13 +24,15 @@ public class MemberFacade {
     }
 
     @Transactional
-    public RsData<Member> join(String username, String password, String nickname) {
-        return memberJoinUseCase.join(username, password, nickname);
+    public RsData<Member> join(String email, String password, String nickname) {
+        // 가입 규칙·해싱은 Join 유스케이스에 위임하고, 컨트롤러는 엔티티를 직접 다루지 않는다.
+        return memberJoinUseCase.join(email, password, nickname);
     }
 
     @Transactional
-    public JwtTokenProvider.TokenPair login(String username, String password) {
-        return memberAuthUseCase.login(username, password);
+    public JwtTokenProvider.TokenPair login(String email, String password) {
+        // 로그인 성공 시 Access/Refresh Token 발급과 Refresh Token 저장이 하나의 트랜잭션으로 처리된다.
+        return memberAuthUseCase.login(email, password);
     }
 
     @Transactional
@@ -45,18 +45,12 @@ public class MemberFacade {
         memberAuthUseCase.logout(memberId);
     }
 
-    public String randomTip() {
-//        public String randomTip(int memberId) {
-//        Member member = memberRepository.findById(memberId).get();
-//        int dday = memberPolicy.getPasswordChangeDays() - Period.between(member.getModifyDate().toLocalDate(), LocalDate.now()).getDays();
-        return "비밀번호의 유효기간은 %d일 입니다.".formatted(memberPolicy.getPasswordChangeDays());
-    }
-
     @Transactional
     public Optional<Member> findById(int id) { return memberRepository.findById(id); }
 
+    /** JWT subject와 회원 조회 기준을 이메일 하나로 통일해 인증 주체가 흔들리지 않게 한다. */
     @Transactional(readOnly = true)
-    public Optional<Member> findByUsername(String username) {
-        return memberRepository.findByUsername(username);
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
 }
